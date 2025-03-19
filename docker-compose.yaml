@@ -1,0 +1,59 @@
+services:
+  database:
+    image: postgres:latest
+    container_name: my_database
+    environment:
+      POSTGRES_DB: java_bd
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  db_initializer:
+    build:
+      context: .
+      dockerfile: Dockerfile.initdb  # указываем путь к Dockerfile
+    container_name: db_initializer
+    working_dir: /db_init
+    volumes:
+      - ./seed_db.py:/db_init/seed_db.py
+    command: ["python", "/db_init/seed_db.py"]
+    depends_on:
+      - database
+    networks:
+      - app_network
+    environment:
+      POSTGRES_DB: java_bd
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_HOST: database
+
+  app:
+    image: openjdk:21
+    container_name: my_app
+    working_dir: /app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/java_bd
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    volumes:
+      - ./module1-1.0-SNAPSHOT.jar:/app/module1-1.0-SNAPSHOT.jar
+    command: ["java", "-jar", "/app/module1-1.0-SNAPSHOT.jar"]
+    depends_on:
+      - database
+      - db_initializer
+    networks:
+      - app_network
+    ports:
+      - "8080:8080"
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
