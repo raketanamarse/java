@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  database:
+    image: postgres:latest
+    container_name: my_database
+    environment:
+      POSTGRES_DB: java_bd
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - postgres_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - database
+    networks:
+      - postgres_network
+
+
+networks:
+  postgres_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
