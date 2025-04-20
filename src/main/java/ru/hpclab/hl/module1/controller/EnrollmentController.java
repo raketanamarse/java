@@ -61,4 +61,19 @@ public class EnrollmentController {
     public Double getAverageStudentsPerCourse() {
         return statisticsService.calculateAverageStudentsPerCourse();
     }
+
+    @DeleteMapping("/{enrollmentId}")
+    public ResponseEntity<Void> deleteEnrollment(@PathVariable Long enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+        enrollmentRepository.delete(enrollment);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllEnrollments() {
+        enrollmentRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
 }

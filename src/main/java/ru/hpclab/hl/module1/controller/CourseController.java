@@ -30,4 +30,22 @@ public class CourseController {
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
         return ResponseEntity.ok(courseRepository.save(course));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+        if (courseRepository.existsById(id)) {
+            courseRepository.deleteById(id);
+            return ResponseEntity.noContent().build(); // HTTP 204
+        } else {
+            return ResponseEntity.notFound().build(); // HTTP 404
+        }
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllCourses() {
+        courseRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
+
 }

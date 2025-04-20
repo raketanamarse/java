@@ -34,5 +34,21 @@ public class StudentController {
         return ResponseEntity.ok(savedStudent);
     }
 
+    //--------------------------------------------------------------------------------
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        if (studentRepository.existsById(id)) {
+            studentRepository.deleteById(id);
+            return ResponseEntity.noContent().build(); // HTTP 204
+        } else {
+            return ResponseEntity.notFound().build(); // HTTP 404
+        }
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllStudents() {
+        studentRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
 }
 
