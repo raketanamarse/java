@@ -26,6 +26,7 @@ public class EnrollmentController {
         return enrollmentRepository.findAll();
     }
 
+
     @PostMapping
     public ResponseEntity<Enrollment> enrollStudent(@RequestBody EnrollmentRequest request) {
         Student student = studentRepository.findById(request.getStudentId())
